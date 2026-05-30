@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "252693101596",
+    "project_id": "bank-pet-project-55063",
+    "storage_bucket": "bank-pet-project-55063.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:252693101596:android:4bf4094f28f7087f5773d9",
+        "android_client_info": {
+          "package_name": "com.example.BankSimulator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKQhqxpRRE_kBCE_wdvVxDdNzxXeqoXbo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
