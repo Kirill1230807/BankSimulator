@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.example.banksimulator.ui.theme.BankSimulatorTheme
+import com.example.banksimulator.core.ui.theme.BankSimulatorTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
