@@ -1,4 +1,4 @@
-package com.example.banksimulator.ui.theme
+package com.example.banksimulator.core.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
