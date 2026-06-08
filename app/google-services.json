@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:252693101596:android:4bf4094f28f7087f5773d9",
+        "mobilesdk_app_id": "1:252693101596:android:38729c12c258be935773d9",
         "android_client_info": {
-          "package_name": "com.example.BankSimulator"
+          "package_name": "com.example.banksimulator"
         }
       },
       "oauth_client": [],

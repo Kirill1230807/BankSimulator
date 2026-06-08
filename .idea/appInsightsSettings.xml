@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.example.banksimulator" />
+                  <option name="mobileSdkAppId" value="1:252693101596:android:38729c12c258be935773d9" />
+                  <option name="projectId" value="bank-pet-project-55063" />
+                  <option name="projectNumber" value="252693101596" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
