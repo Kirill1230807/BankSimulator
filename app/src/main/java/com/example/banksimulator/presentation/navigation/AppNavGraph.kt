@@ -7,6 +7,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import com.example.banksimulator.presentation.screens.home.HomeScreen
+import com.example.banksimulator.presentation.screens.login.LoginScreen
+import com.example.banksimulator.presentation.screens.register.RegisterScreen
 
 @Composable
 fun AppNavGraph(navController: NavHostController) {
@@ -22,10 +25,15 @@ fun AppNavGraph(navController: NavHostController) {
 fun NavGraphBuilder.authNavGraph(navController: NavController) {
     navigation<AuthGraph>(startDestination = LoginScreen) {
         composable<LoginScreen> {
-            // LoginScreenContent(navController)
+            LoginScreen(
+                onNavigateToRegister = { navController.navigate(RegisterScreen) },
+                onNavigateToMain = { navController.navigate(MainGraph) }
+            )
         }
         composable<RegisterScreen> {
-            // RegistrationScreenContent(navController)
+            RegisterScreen(
+                onNavigateToMain = { navController.navigate(MainGraph) },
+                onNavigateToLogin = { navController.navigate(LoginScreen) })
         }
     }
 }
@@ -33,7 +41,7 @@ fun NavGraphBuilder.authNavGraph(navController: NavController) {
 fun NavGraphBuilder.mainNavGraph(navController: NavController) {
     navigation<MainGraph>(startDestination = MainScreen) {
         composable<MainScreen> {
-            // MainScreenContent(navController)
+            HomeScreen()
         }
     }
 }
