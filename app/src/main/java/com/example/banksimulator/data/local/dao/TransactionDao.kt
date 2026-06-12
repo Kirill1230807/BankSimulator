@@ -31,6 +31,6 @@ interface TransactionDao {
     @Query("SELECT * FROM transactions WHERE transactionId = :transactionId")
     suspend fun getTransactionById(transactionId: String): TransactionEntity?
 
-    @Query("SELECT * FROM transactions WHERE senderAccountId = :accountId OR receiverAccountId = :accountId ORDER BY createdAt DESC")
-    fun getTransactionsForAccount(accountId: String): Flow<List<TransactionEntity>>
+    @Query("SELECT * FROM transactions WHERE senderAccountId IN (SELECT accountId FROM accounts WHERE ownerId = :userId) OR receiverAccountId IN (SELECT accountId FROM accounts WHERE ownerId = :userId) ORDER BY createdAt DESC")
+    fun getTransactionsForUser(userId: String): Flow<List<TransactionEntity>>
 }

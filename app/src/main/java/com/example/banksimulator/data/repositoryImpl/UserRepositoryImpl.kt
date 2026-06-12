@@ -1,7 +1,10 @@
 package com.example.banksimulator.data.repositoryImpl
 
+import com.example.banksimulator.data.local.dao.TransactionDao
 import com.example.banksimulator.data.local.dao.UserDao
+import com.example.banksimulator.data.local.entity.TransactionEntity
 import com.example.banksimulator.data.local.entity.UserEntity
+import com.example.banksimulator.data.local.entity.foreignkeys.HomeUserData
 import com.example.banksimulator.data.local.entity.foreignkeys.UserWithAccounts
 import com.example.banksimulator.domain.repository.UserRepository
 import com.google.firebase.Firebase
@@ -18,7 +21,8 @@ import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth,
-    private val userDao: UserDao
+    private val userDao: UserDao,
+    private val transactionDao: TransactionDao
 ) : UserRepository {
     override suspend fun login(
         email: String,
@@ -85,6 +89,15 @@ class UserRepositoryImpl @Inject constructor(
             flowOf(null)
         }
     }
+
+    override fun getHomeUserData(userId: String): Flow<HomeUserData?> {
+        return userDao.getHomeUserData(userId)
+    }
+
+    override fun getUserTransactions(userId: String): Flow<List<TransactionEntity>> {
+        return transactionDao.getTransactionsForUser(userId)
+    }
+
 
     override fun hasUser(): Boolean {
         return Firebase.auth.currentUser != null

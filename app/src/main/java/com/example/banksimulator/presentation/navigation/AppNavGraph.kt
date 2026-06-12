@@ -41,7 +41,18 @@ fun NavGraphBuilder.authNavGraph(navController: NavController) {
 fun NavGraphBuilder.mainNavGraph(navController: NavController) {
     navigation<MainGraph>(startDestination = MainScreen) {
         composable<MainScreen> {
-            HomeScreen()
+            HomeScreen(
+                onNavigateToAccounts = {
+                    // Assuming an AccountsScreen destination exists in the navigation schema
+                    // navController.navigate(AccountsScreen)
+                },
+                onLogout = {
+                    navController.navigate(AuthGraph) {
+                        popUpTo(MainGraph) { inclusive = true }
+                    }
+                },
+                onNavigateToHistory = {}
+            )
         }
     }
 }
