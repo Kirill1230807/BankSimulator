@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,8 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -45,7 +42,7 @@ import com.example.banksimulator.data.local.entity.utils.AccountStatus
 import com.example.banksimulator.data.local.entity.utils.AccountType
 import com.example.banksimulator.data.local.entity.utils.CardStatus
 import com.example.banksimulator.data.local.entity.utils.Currency
-import com.example.banksimulator.presentation.screens.home.components.BankCard
+import com.example.banksimulator.presentation.screens.home.components.CardCarousel
 import com.example.banksimulator.presentation.screens.home.components.TransactionRow
 import java.math.BigDecimal
 
@@ -54,6 +51,7 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     onNavigateToAccounts: () -> Unit,
     onNavigateToHistory: () -> Unit,
+    onNavigateToCardSettings: (String) -> Unit,
     onLogout: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -61,6 +59,7 @@ fun HomeScreen(
         state = uiState,
         onAccountsClick = onNavigateToAccounts,
         onHistoryClick = onNavigateToHistory,
+        onCardSettingsClick = onNavigateToCardSettings,
         onLogoutClick = {
             viewModel.onSignOutClick()
             onLogout()
@@ -74,6 +73,7 @@ private fun HomeScreenContent(
     state: HomeState,
     onAccountsClick: () -> Unit,
     onHistoryClick: () -> Unit,
+    onCardSettingsClick: (String) -> Unit,
     onLogoutClick: () -> Unit
 ) {
     Scaffold(
@@ -81,7 +81,6 @@ private fun HomeScreenContent(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
                     .background(MaterialTheme.colorScheme.primaryContainer)
                     .padding(20.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -116,7 +115,8 @@ private fun HomeScreenContent(
                 )
             } else {
                 LazyColumn(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
                         .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
                 ) {
                     item {
@@ -127,18 +127,13 @@ private fun HomeScreenContent(
                         )
                     }
                     item {
-                        LazyRow(
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            contentPadding = PaddingValues(horizontal = 16.dp)
-                        ) {
-                            items(state.cards) { item ->
-                                BankCard(
-                                    cardNumber = item.card.cardNumber,
-                                    expirationDate = item.card.expirationDate,
-                                    onCardSettingsClick = { }
-                                )
-                            }
-                        }
+                        CardCarousel(
+                            cards = state.cards.map { it.card },
+                            onCardSettingsClick = { cardEntity ->
+                                onCardSettingsClick(cardEntity.cardId)
+                            },
+                            onAddNewCardClick = { TODO() }
+                        )
                     }
                     item {
                         Column(
@@ -176,7 +171,7 @@ private fun HomeScreenContent(
                                         .padding(vertical = 32.dp),
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    Text("Поки транзакцій не було 💸", color = Color.Gray)
+                                    Text("Поки транзакцій не було 💵", color = Color.Gray)
                                 }
                             } else {
                                 state.transactions.take(3).forEach { transaction ->
@@ -280,6 +275,7 @@ private fun HomeScreenPreview() {
             ),
             onAccountsClick = {},
             onHistoryClick = {},
+            onCardSettingsClick = {},
             onLogoutClick = {}
         )
     }

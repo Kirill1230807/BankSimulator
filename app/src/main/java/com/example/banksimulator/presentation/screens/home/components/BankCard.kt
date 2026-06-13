@@ -38,7 +38,7 @@ fun BankCard(
         colors = CardDefaults.elevatedCardColors(
             containerColor = Color(0xFF1A237E)
         ),
-        modifier = Modifier.size(width = 240.dp, height = 150.dp)
+        modifier = Modifier.size(width = 350.dp, height = 200.dp)
     ) {
         Column(
             modifier = Modifier
@@ -52,7 +52,7 @@ fun BankCard(
             ) {
                 IconButton(
                     onClick = onCardSettingsClick,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(30.dp)
                     ) {
                     Icon(
                         painter = painterResource(R.drawable.settings),
@@ -92,7 +92,7 @@ fun BankCard(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showSystemUi = true)
 @Composable
 private fun BankCardPreview() {
     BankCard(

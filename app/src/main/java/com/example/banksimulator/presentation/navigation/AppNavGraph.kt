@@ -51,7 +51,8 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
                         popUpTo(MainGraph) { inclusive = true }
                     }
                 },
-                onNavigateToHistory = {}
+                onNavigateToHistory = {},
+                onNavigateToCardSettings = {}
             )
         }
     }

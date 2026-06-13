@@ -93,7 +93,7 @@ fun TransactionRow(
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 16.sp
             ),
-            color = if (isExpense) MaterialTheme.colorScheme.onSurface else Color(0xFF388E3C)
+            color = if (isExpense) MaterialTheme.colorScheme.error else Color(0xFF388E3C)
         )
     }
 }
