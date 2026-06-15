@@ -1,4 +1,4 @@
-package com.example.banksimulator.data.local.entity.utils
+package com.example.banksimulator.domain.model
 
 enum class AccountType {
     PERSONAL,

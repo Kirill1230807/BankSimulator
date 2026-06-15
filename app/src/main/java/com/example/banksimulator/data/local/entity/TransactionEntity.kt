@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.example.banksimulator.data.local.entity.utils.Currency
+import com.example.banksimulator.domain.model.Currency
 import java.math.BigDecimal
 
 @Entity(

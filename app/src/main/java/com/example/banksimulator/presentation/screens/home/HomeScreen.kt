@@ -38,10 +38,10 @@ import com.example.banksimulator.data.local.entity.AccountEntity
 import com.example.banksimulator.data.local.entity.CardEntity
 import com.example.banksimulator.data.local.entity.TransactionEntity
 import com.example.banksimulator.data.local.entity.foreignkeys.CardWithAccount
-import com.example.banksimulator.data.local.entity.utils.AccountStatus
-import com.example.banksimulator.data.local.entity.utils.AccountType
-import com.example.banksimulator.data.local.entity.utils.CardStatus
-import com.example.banksimulator.data.local.entity.utils.Currency
+import com.example.banksimulator.domain.model.AccountStatus
+import com.example.banksimulator.domain.model.AccountType
+import com.example.banksimulator.domain.model.CardStatus
+import com.example.banksimulator.domain.model.Currency
 import com.example.banksimulator.presentation.screens.home.components.CardCarousel
 import com.example.banksimulator.presentation.screens.home.components.TransactionRow
 import java.math.BigDecimal

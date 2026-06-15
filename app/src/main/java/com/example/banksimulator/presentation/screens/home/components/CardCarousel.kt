@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import com.example.banksimulator.core.ui.theme.BankSimulatorTheme
 import com.example.banksimulator.data.local.entity.CardEntity
-import com.example.banksimulator.data.local.entity.utils.CardStatus
+import com.example.banksimulator.domain.model.CardStatus
 import kotlin.math.absoluteValue
 
 @Composable
