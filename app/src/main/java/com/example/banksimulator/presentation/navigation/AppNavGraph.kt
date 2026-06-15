@@ -1,24 +1,51 @@
 package com.example.banksimulator.presentation.navigation
 
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
+import com.example.banksimulator.presentation.screens.exchangerates.ExchangeRatesScreen
 import com.example.banksimulator.presentation.screens.home.HomeScreen
 import com.example.banksimulator.presentation.screens.login.LoginScreen
 import com.example.banksimulator.presentation.screens.register.RegisterScreen
 
 @Composable
 fun AppNavGraph(navController: NavHostController) {
-    NavHost(
-        navController = navController,
-        startDestination = AuthGraph
-    ) {
-        authNavGraph(navController)
-        mainNavGraph(navController)
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+
+    val showBottomBar =
+        currentDestination?.hasRoute<MainScreen>() == true || currentDestination?.hasRoute<ExchangeRatesScreen>() == true
+
+    Scaffold(
+        bottomBar = {
+            if (showBottomBar) {
+                BottomNavigationBar(
+                    navController = navController,
+                    currentDestination = currentDestination
+                )
+            }
+        }
+    ) { paddingValues ->
+
+
+        NavHost(
+            navController = navController,
+            startDestination = AuthGraph,
+            modifier = Modifier.padding(paddingValues)
+        ) {
+            authNavGraph(navController)
+            mainNavGraph(navController)
+        }
     }
 }
 
@@ -54,6 +81,9 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
                 onNavigateToHistory = {},
                 onNavigateToCardSettings = {}
             )
+        }
+        composable<ExchangeRatesScreen> {
+            ExchangeRatesScreen()
         }
     }
 }

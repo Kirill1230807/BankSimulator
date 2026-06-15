@@ -27,7 +27,7 @@ import com.example.banksimulator.data.local.entity.converters.system_converters.
         CardEntity::class,
         TransactionEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(

@@ -132,7 +132,7 @@ private fun HomeScreenContent(
                             onCardSettingsClick = { cardEntity ->
                                 onCardSettingsClick(cardEntity.cardId)
                             },
-                            onAddNewCardClick = { TODO() }
+                            onAddNewCardClick = { }
                         )
                     }
                     item {
