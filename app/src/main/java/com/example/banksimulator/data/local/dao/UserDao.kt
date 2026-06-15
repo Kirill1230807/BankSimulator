@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.example.banksimulator.data.local.entity.UserEntity
+import com.example.banksimulator.data.local.entity.foreignkeys.HomeUserData
 import com.example.banksimulator.data.local.entity.foreignkeys.UserWithAccounts
 import kotlinx.coroutines.flow.Flow
 
@@ -20,4 +21,8 @@ interface UserDao {
     @Transaction
     @Query("SELECT * FROM users WHERE userId = :userId")
     fun getUserWithAccounts(userId: String): Flow<UserWithAccounts>
+
+    @Transaction
+    @Query("SELECT * FROM users WHERE userId = :userId")
+    fun getHomeUserData(userId: String): Flow<HomeUserData?>
 }

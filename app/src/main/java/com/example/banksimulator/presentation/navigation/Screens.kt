@@ -19,3 +19,6 @@ object RegisterScreen
 
 @Serializable
 object MainScreen
+
+@Serializable
+object ExchangeRatesScreen

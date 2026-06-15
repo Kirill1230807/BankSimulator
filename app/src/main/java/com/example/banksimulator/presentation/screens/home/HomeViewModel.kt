@@ -7,42 +7,60 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-data class HomeUiState(
-    val firstName: String = "",
-    val lastName: String = "",
-    val isLoading: Boolean = false
-)
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(HomeUiState())
-    val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(HomeState())
+    val uiState: StateFlow<HomeState> = _uiState.asStateFlow()
 
     init {
-        loadUserData()
+        loadData()
     }
 
-    fun loadUserData() {
+    fun loadData() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-            userRepository.getCurrentUserData().collect { user ->
-                if (user != null) {
-                    _uiState.update {
-                        it.copy(
-                            firstName = user.firstName,
-                            lastName = user.lastName,
-                            isLoading = false
-                        )
+            val user = userRepository.getCurrentUserData().firstOrNull()
+            val userId = user?.userId ?: run {
+                _uiState.update { it.copy(isLoading = false, errorMessage = "Користувача не знайдено") }
+                return@launch
+            }
+
+            launch {
+                userRepository.getHomeUserData(userId).collect { homeData ->
+                    if (homeData != null) {
+                        _uiState.update { state ->
+                            state.copy(
+                                firstName = homeData.user.firstName,
+                                lastName = homeData.user.lastName,
+                                isLoading = false
+                            )
+                        }
                     }
                 }
             }
+
+            launch {
+                userRepository.getUserTransactions(userId).collect { transaction ->
+                    _uiState.update { state ->
+                        state.copy(transactions = transaction)
+                    }
+                }
+            }
+        }
+    }
+
+    fun onSignOutClick() {
+        viewModelScope.launch {
+            userRepository.signOut()
+            _uiState.update { HomeState() }
         }
     }
 }

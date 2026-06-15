@@ -31,6 +31,7 @@ data class TransactionEntity(
     @PrimaryKey val transactionId: String,
     val senderAccountId: String,
     val receiverAccountId: String,
+    val name: String,
     val amount: BigDecimal,
     val description: String?,
     val currency: Currency,

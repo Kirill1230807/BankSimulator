@@ -23,6 +23,7 @@ data class CardEntity(
     @PrimaryKey val cardId: String,
     val accountOwnerId: String,
     val cardNumber: String,
+    val cardColor: Long,
     val cardHolderName: String,
     val expirationDate: String,
     val status: CardStatus,
