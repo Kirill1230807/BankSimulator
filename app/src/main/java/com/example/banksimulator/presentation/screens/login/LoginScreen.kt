@@ -88,7 +88,17 @@ private fun LoginScreenContent(
                 onValueChange = onEmailChange,
                 label = { Text("Email") },
                 modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+                singleLine = true,
+                isError = state.emailError != null,
+                supportingText = {
+                    if (state.emailError != null) {
+                        Text(
+                            text = state.emailError,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                }
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -107,6 +117,16 @@ private fun LoginScreenContent(
 
                     IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
                         Icon(imageVector = image, contentDescription = description)
+                    }
+                },
+                isError = state.passwordError != null,
+                supportingText = {
+                    if (state.passwordError != null) {
+                        Text(
+                            text = state.passwordError,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall
+                        )
                     }
                 }
             )
