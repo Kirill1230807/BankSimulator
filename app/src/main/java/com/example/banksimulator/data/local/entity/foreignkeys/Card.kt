@@ -5,7 +5,7 @@ import androidx.room.Relation
 import com.example.banksimulator.data.local.entity.AccountEntity
 import com.example.banksimulator.data.local.entity.CardEntity
 
-data class CardWithAccount(
+data class Card(
     @Embedded val card: CardEntity,
 
     @Relation(

@@ -6,5 +6,5 @@ data class User(
     val lastName: String,
     val email: String,
     val phoneNumber: String,
-    val createdAt: Long
+    val createdAt: Long = System.currentTimeMillis()
 )

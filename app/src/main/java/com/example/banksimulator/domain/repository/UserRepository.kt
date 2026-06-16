@@ -1,24 +1,22 @@
 package com.example.banksimulator.domain.repository
 
-import com.example.banksimulator.data.local.entity.TransactionEntity
-import com.example.banksimulator.data.local.entity.UserEntity
-import com.example.banksimulator.data.local.entity.foreignkeys.HomeUserData
-import com.example.banksimulator.data.local.entity.foreignkeys.UserWithAccounts
+import com.example.banksimulator.domain.model.Account
+import com.example.banksimulator.domain.model.Transaction
+import com.example.banksimulator.domain.model.User
 import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {
     suspend fun login(email: String, password: String): Result<Unit>
-    suspend fun register(
-        firstName: String,
-        lastName: String,
+    suspend fun signUpWithEmail(
         email: String,
         password: String,
-        phoneNumber: String
-        ): Result<Unit>
-    fun getUserWithAccounts(userId: String): Flow<UserWithAccounts>
-    fun getCurrentUserData(): Flow<UserEntity?>
-    fun getHomeUserData(userId: String): Flow<HomeUserData?>
-    fun getUserTransactions(userId: String): Flow<List<TransactionEntity>>
+    ): String
+
+    suspend fun saveUserProfile(user: User)
+    fun getUserWithAccounts(userId: String): Flow<List<Account>>
+    fun getCurrentUserData(): Flow<User?>
+    fun getHomeUserData(userId: String): Flow<User?>
+    fun getUserTransactions(userId: String): Flow<List<Transaction>>
     fun hasUser(): Boolean
     suspend fun signOut()
 }

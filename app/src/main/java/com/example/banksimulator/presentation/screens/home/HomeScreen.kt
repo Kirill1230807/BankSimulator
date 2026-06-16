@@ -36,12 +36,12 @@ import com.example.banksimulator.R
 import com.example.banksimulator.core.ui.theme.BankSimulatorTheme
 import com.example.banksimulator.data.local.entity.AccountEntity
 import com.example.banksimulator.data.local.entity.CardEntity
-import com.example.banksimulator.data.local.entity.TransactionEntity
-import com.example.banksimulator.data.local.entity.foreignkeys.CardWithAccount
+import com.example.banksimulator.data.local.entity.foreignkeys.Card
 import com.example.banksimulator.domain.model.AccountStatus
 import com.example.banksimulator.domain.model.AccountType
 import com.example.banksimulator.domain.model.CardStatus
 import com.example.banksimulator.domain.model.Currency
+import com.example.banksimulator.domain.model.Transaction
 import com.example.banksimulator.presentation.screens.home.components.CardCarousel
 import com.example.banksimulator.presentation.screens.home.components.TransactionRow
 import java.math.BigDecimal
@@ -206,7 +206,7 @@ private fun HomeScreenPreview() {
     )
 
     val fakeCards = listOf(
-        CardWithAccount(
+        Card(
             card = CardEntity(
                 cardId = "1",
                 accountOwnerId = "1",
@@ -218,7 +218,7 @@ private fun HomeScreenPreview() {
             ),
             account = fakeAccount
         ),
-        CardWithAccount(
+        Card(
             card = CardEntity(
                 cardId = "2",
                 accountOwnerId = "1",
@@ -232,8 +232,8 @@ private fun HomeScreenPreview() {
         )
     )
 
-    val fakeTransactions = listOf(
-        TransactionEntity(
+    val fakeTransactions: List<Transaction> = listOf(
+        Transaction(
             transactionId = "1",
             senderAccountId = "1",
             receiverAccountId = "2",
@@ -241,9 +241,10 @@ private fun HomeScreenPreview() {
             amount = BigDecimal("500.00"),
             description = "Переказ коштів від людини",
             currency = Currency.UAH,
-            status = "COMPLETED"
+            status = "COMPLETED",
+            createdAt = System.currentTimeMillis()
         ),
-        TransactionEntity(
+        Transaction(
             transactionId = "2",
             senderAccountId = "3",
             receiverAccountId = "1",
@@ -251,9 +252,10 @@ private fun HomeScreenPreview() {
             amount = BigDecimal("1200.00"),
             description = "Поповнення рахунку",
             currency = Currency.UAH,
-            status = "COMPLETED"
+            status = "COMPLETED",
+            createdAt = System.currentTimeMillis()
         ),
-        TransactionEntity(
+        Transaction(
             transactionId = "1",
             senderAccountId = "1",
             receiverAccountId = "2",
@@ -261,7 +263,8 @@ private fun HomeScreenPreview() {
             amount = BigDecimal("-500.00"),
             description = "Переказ коштів від людини",
             currency = Currency.UAH,
-            status = "COMPLETED"
+            status = "COMPLETED",
+            createdAt = System.currentTimeMillis()
         ),
     )
 
