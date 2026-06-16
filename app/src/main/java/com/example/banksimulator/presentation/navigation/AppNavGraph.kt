@@ -54,13 +54,26 @@ fun NavGraphBuilder.authNavGraph(navController: NavController) {
         composable<LoginScreen> {
             LoginScreen(
                 onNavigateToRegister = { navController.navigate(RegisterScreen) },
-                onNavigateToMain = { navController.navigate(MainGraph) }
+                onNavigateToMain = {
+                    navController.navigate(MainGraph) {
+                        popUpTo(AuthGraph) { inclusive = true }
+                    }
+                }
             )
         }
         composable<RegisterScreen> {
             RegisterScreen(
-                onNavigateToMain = { navController.navigate(MainGraph) },
-                onNavigateToLogin = { navController.navigate(LoginScreen) })
+                onNavigateToMain = {
+                    navController.navigate(MainGraph) {
+                        popUpTo(AuthGraph) { inclusive = true }
+                    }
+                },
+                onNavigateToLogin = {
+                    navController.navigate(LoginScreen) {
+                        popUpTo(LoginScreen) { inclusive = true }
+                    }
+                }
+            )
         }
     }
 }
@@ -75,7 +88,7 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
                 },
                 onLogout = {
                     navController.navigate(AuthGraph) {
-                        popUpTo(MainGraph) { inclusive = true }
+                        popUpTo(navController.graph.id) { inclusive = true }
                     }
                 },
                 onNavigateToHistory = {},

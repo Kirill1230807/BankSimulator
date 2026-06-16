@@ -1,7 +1,7 @@
 package com.example.banksimulator.data.local.entity.converters.enums_converters
 
 import androidx.room.TypeConverter
-import com.example.banksimulator.data.local.entity.utils.AccountStatus
+import com.example.banksimulator.domain.model.AccountStatus
 
 class AccountStatusConverter {
     @TypeConverter

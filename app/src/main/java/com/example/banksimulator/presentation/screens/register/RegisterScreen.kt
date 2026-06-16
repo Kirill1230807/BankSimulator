@@ -29,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -62,7 +63,13 @@ fun RegisterScreen(
         onPhoneNumberChange = { viewModel.onPhoneNumberChange(it) },
         onConfirmPasswordChange = { viewModel.onConfirmPasswordChange(it) },
         onRegistrationClick = { viewModel.onRegisterClick() },
-        onNavigateToLogin = onNavigateToLogin
+        onNavigateToLogin = onNavigateToLogin,
+        onFirstNameFocusChanged = { viewModel.onFirstNameFocusChanged(it) },
+        onLastNameFocusChanged = { viewModel.onLastNameFocusChanged(it) },
+        onPhoneNumberFocusChanged = { viewModel.onPhoneNumberFocusChanged(it) },
+        onEmailFocusChanged = { viewModel.onEmailFocusChanged(it) },
+        onPasswordFocusChanged = { viewModel.onPasswordFocusChanged(it) },
+        onConfirmPasswordFocusChanged = { viewModel.onConfirmPasswordFocusChanged(it) }
     )
 }
 
@@ -76,9 +83,24 @@ private fun RegisterScreenContent(
     onPhoneNumberChange: (String) -> Unit,
     onConfirmPasswordChange: (String) -> Unit,
     onRegistrationClick: () -> Unit,
-    onNavigateToLogin: () -> Unit
-) {
+    onNavigateToLogin: () -> Unit,
+    onFirstNameFocusChanged: (Boolean) -> Unit,
+    onLastNameFocusChanged: (Boolean) -> Unit,
+    onPhoneNumberFocusChanged: (Boolean) -> Unit,
+    onEmailFocusChanged: (Boolean) -> Unit,
+    onPasswordFocusChanged: (Boolean) -> Unit,
+    onConfirmPasswordFocusChanged: (Boolean) -> Unit,
+
+    ) {
     var isPasswordVisible by remember { mutableStateOf(false) }
+    var isConfirmPasswordVisible by remember { mutableStateOf(false) }
+
+    var firstNameGainedFocus by remember { mutableStateOf(false) }
+    var lastNameGainedFocus by remember { mutableStateOf(false) }
+    var emailGainedFocus by remember { mutableStateOf(false) }
+    var passwordGainedFocus by remember { mutableStateOf(false) }
+    var confirmPasswordGainedFocus by remember { mutableStateOf(false) }
+    var phoneNumberGainedFocus by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -92,36 +114,114 @@ private fun RegisterScreenContent(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
             Text("Реєстрація", fontSize = 24.sp)
             OutlinedTextField(
                 value = state.firstName,
                 onValueChange = onFirstNameChange,
                 label = { Text("Ім'я") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .onFocusChanged { focusState ->
+                        if (focusState.isFocused) {
+                            firstNameGainedFocus = true
+                        }
+
+                        if (!focusState.isFocused && firstNameGainedFocus) {
+                            onFirstNameFocusChanged(false)
+                        }
+                    },
+                singleLine = true,
+                isError = state.firstNameError != null,
+                supportingText = {
+                    if (state.firstNameError != null) {
+                        Text(
+                            text = state.firstNameError,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                }
             )
+
+
             Spacer(modifier = Modifier.height(16.dp))
+
             OutlinedTextField(
                 value = state.lastName,
                 onValueChange = onLastNameChange,
                 label = { Text("Прізвище") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .onFocusChanged { focusState ->
+                        if (focusState.isFocused) {
+                            lastNameGainedFocus = true
+                        }
+
+                        if (!focusState.isFocused && lastNameGainedFocus) {
+                            onLastNameFocusChanged(false)
+                        }
+                    },
+                singleLine = true,
+                isError = state.lastNameError != null,
+                supportingText = {
+                    if (state.lastNameError != null) {
+                        Text(
+                            text = state.lastNameError,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                }
             )
+
             Spacer(modifier = Modifier.height(16.dp))
+
             OutlinedTextField(
                 value = state.email,
                 onValueChange = onEmailChange,
                 label = { Text("Email") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .onFocusChanged { focusState ->
+                        if (focusState.isFocused) {
+                            emailGainedFocus = true
+                        }
+
+                        if (!focusState.isFocused && emailGainedFocus) {
+                            onEmailFocusChanged(false)
+                        }
+                    },
+                singleLine = true,
+                isError = state.emailError != null,
+                supportingText = {
+                    if (state.emailError != null) {
+                        Text(
+                            text = state.emailError,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                }
             )
+
             Spacer(modifier = Modifier.height(16.dp))
+
             OutlinedTextField(
                 value = state.password,
                 onValueChange = onPasswordChange,
                 label = { Text("Пароль") },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .onFocusChanged { focusState ->
+                        if (focusState.isFocused) {
+                            passwordGainedFocus = true
+                        }
+
+                        if (!focusState.isFocused && passwordGainedFocus) {
+                            onPasswordFocusChanged(false)
+                        }
+                    },
                 singleLine = true,
                 visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
@@ -134,36 +234,89 @@ private fun RegisterScreenContent(
                         Icon(imageVector = image, contentDescription = description)
                     }
                 },
-                isError = state.errorMessage != null
+                isError = state.passwordError != null,
+                supportingText = {
+                    if (state.passwordError != null) {
+                        Text(
+                            text = state.passwordError,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                }
             )
+
             Spacer(modifier = Modifier.height(16.dp))
+
             OutlinedTextField(
                 value = state.confirmPassword,
                 onValueChange = onConfirmPasswordChange,
                 label = { Text("Підтвердіть пароль ") },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .onFocusChanged { focusState ->
+                        if (focusState.isFocused) {
+                            confirmPasswordGainedFocus = true
+                        }
+
+                        if (!focusState.isFocused && confirmPasswordGainedFocus) {
+                            onConfirmPasswordFocusChanged(false)
+                        }
+                    },
                 singleLine = true,
-                visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                visualTransformation = if (isConfirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
-                    val image = if (isPasswordVisible) Icons.Filled.Visibility
+                    val image = if (isConfirmPasswordVisible) Icons.Filled.Visibility
                     else Icons.Filled.VisibilityOff
                     val description =
-                        if (isPasswordVisible) "Приховати пароль" else "Показати пароль"
+                        if (isConfirmPasswordVisible) "Приховати пароль" else "Показати пароль"
 
-                    IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
+                    IconButton(onClick = { isConfirmPasswordVisible = !isConfirmPasswordVisible }) {
                         Icon(imageVector = image, contentDescription = description)
                     }
                 },
-                isError = state.errorMessage != null
+                isError = state.confirmPasswordError != null,
+                supportingText = {
+                    if (state.confirmPasswordError != null) {
+                        Text(
+                            text = state.confirmPasswordError,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                }
             )
+
             Spacer(modifier = Modifier.height(16.dp))
+
             OutlinedTextField(
                 value = state.phoneNumber,
                 onValueChange = onPhoneNumberChange,
                 label = { Text("Номер телефону") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .onFocusChanged { focusState ->
+                        if (focusState.isFocused) {
+                            phoneNumberGainedFocus = true
+                        }
+
+                        if (!focusState.isFocused && phoneNumberGainedFocus) {
+                            onPhoneNumberFocusChanged(false)
+                        }
+                    },
+                singleLine = true,
+                isError = state.phoneNumberError != null,
+                supportingText = {
+                    if (state.phoneNumberError != null) {
+                        Text(
+                            text = state.phoneNumberError,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                }
             )
+
             Spacer(modifier = Modifier.height(16.dp))
             if (state.errorMessage != null) {
                 Text(
@@ -172,7 +325,9 @@ private fun RegisterScreenContent(
                     modifier = Modifier.padding(vertical = 8.dp)
                 )
             }
+
             Spacer(modifier = Modifier.height(8.dp))
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
@@ -187,6 +342,7 @@ private fun RegisterScreenContent(
                 )
             }
         }
+
         Button(
             onClick = onRegistrationClick,
             shape = RoundedCornerShape(
@@ -223,7 +379,13 @@ private fun RegisterScreenPreview() {
             onConfirmPasswordChange = {},
             onRegistrationClick = {},
             onNavigateToLogin = {},
-            state = RegisterState()
+            state = RegisterState(),
+            onFirstNameFocusChanged = {},
+            onLastNameFocusChanged = {},
+            onPhoneNumberFocusChanged = {},
+            onEmailFocusChanged = {},
+            onPasswordFocusChanged = {},
+            onConfirmPasswordFocusChanged = {}
         )
     }
 }
