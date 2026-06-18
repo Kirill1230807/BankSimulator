@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -26,25 +27,29 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.banksimulator.R
-import com.example.banksimulator.core.ui.theme.BankSimulatorTheme
 import com.example.banksimulator.data.local.entity.AccountEntity
 import com.example.banksimulator.data.local.entity.CardEntity
 import com.example.banksimulator.data.local.entity.foreignkeys.Card
+import com.example.banksimulator.domain.model.Account
 import com.example.banksimulator.domain.model.AccountStatus
 import com.example.banksimulator.domain.model.AccountType
 import com.example.banksimulator.domain.model.CardStatus
 import com.example.banksimulator.domain.model.Currency
 import com.example.banksimulator.domain.model.Transaction
 import com.example.banksimulator.presentation.screens.home.components.CardCarousel
+import com.example.banksimulator.presentation.screens.home.components.ProfileIcon
 import com.example.banksimulator.presentation.screens.home.components.TransactionRow
+import com.example.compose.BankSimulatorTheme
 import java.math.BigDecimal
+import java.text.SimpleDateFormat
+import java.util.Date
+import androidx.compose.ui.platform.LocalLocale
 
 @Composable
 fun HomeScreen(
@@ -52,18 +57,22 @@ fun HomeScreen(
     onNavigateToAccounts: () -> Unit,
     onNavigateToHistory: () -> Unit,
     onNavigateToCardSettings: (String) -> Unit,
-    onLogout: () -> Unit
+    onNavigateToCreateCard: () -> Unit,
+    onLogout: () -> Unit,
+    onTransferMoneyClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     HomeScreenContent(
         state = uiState,
         onAccountsClick = onNavigateToAccounts,
         onHistoryClick = onNavigateToHistory,
+        onAddNewCardClick = onNavigateToCreateCard,
         onCardSettingsClick = onNavigateToCardSettings,
         onLogoutClick = {
             viewModel.onSignOutClick()
             onLogout()
-        }
+        },
+        onTransferMoneyClick = onTransferMoneyClick
     )
 }
 
@@ -73,8 +82,10 @@ private fun HomeScreenContent(
     state: HomeState,
     onAccountsClick: () -> Unit,
     onHistoryClick: () -> Unit,
+    onAddNewCardClick: () -> Unit,
     onCardSettingsClick: (String) -> Unit,
-    onLogoutClick: () -> Unit
+    onLogoutClick: () -> Unit,
+    onTransferMoneyClick: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -86,15 +97,18 @@ private fun HomeScreenContent(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = "Привіт, ${state.firstName} ${state.lastName}",
-                    modifier = Modifier.padding(end = 16.dp)
+                ProfileIcon(
+                    firstName = state.firstName
                 )
                 Button(onClick = onAccountsClick) {
                     Text("Усі рахунки")
                 }
                 IconButton(onClick = onLogoutClick) {
-                    Icon(painter = painterResource(R.drawable.logout), contentDescription = null)
+                    Icon(
+                        painter = painterResource(R.drawable.logout),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
                 }
             }
         }
@@ -117,13 +131,39 @@ private fun HomeScreenContent(
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                        .background(MaterialTheme.colorScheme.background)
                 ) {
+                    item {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)
+                        ) {
+                            val accountTypeTitle = when (state.account?.accountType) {
+                                AccountType.PERSONAL -> "Особистий рахунок"
+                                AccountType.SAVINGS -> "Ощадний рахунок"
+                                AccountType.CREDIT -> "Кредитний рахунок"
+                                AccountType.BUSINESS -> "Бізнес рахунок"
+                                null -> "Рахунок"
+                            }
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                Text(
+                                    text = accountTypeTitle,
+                                    style = MaterialTheme.typography.labelLarge,
+                                    color = MaterialTheme.colorScheme.secondary
+                                )
+                            }
+
+                        }
+                    }
                     item {
                         Text(
                             text = "Мої картки",
                             style = MaterialTheme.typography.titleLarge,
-                            modifier = Modifier.padding(16.dp)
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
                         )
                     }
                     item {
@@ -132,8 +172,44 @@ private fun HomeScreenContent(
                             onCardSettingsClick = { cardEntity ->
                                 onCardSettingsClick(cardEntity.cardId)
                             },
-                            onAddNewCardClick = { }
+                            onAddNewCardClick = onAddNewCardClick
                         )
+                    }
+                    item {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 16.dp, end = 16.dp, top = 16.dp),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "${state.balance}",
+                                style = MaterialTheme.typography.headlineMedium,
+                                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = state.account?.currency?.name ?: "",
+                                style = MaterialTheme.typography.titleLarge,
+                                color = MaterialTheme.colorScheme.outline
+                            )
+                        }
+                    }
+                    item {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 16.dp, end = 16.dp, top = 16.dp),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Button(
+                                onClick = onTransferMoneyClick
+                            ) {
+                                Text("Переказати кошти")
+                            }
+                        }
                     }
                     item {
                         Column(
@@ -141,7 +217,7 @@ private fun HomeScreenContent(
                                 .fillMaxWidth()
                                 .padding(16.dp)
                                 .clip(RoundedCornerShape(16.dp))
-                                .background(Color.White)
+                                .background(MaterialTheme.colorScheme.surface)
                         ) {
                             Row(
                                 modifier = Modifier
@@ -171,14 +247,22 @@ private fun HomeScreenContent(
                                         .padding(vertical = 32.dp),
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    Text("Поки транзакцій не було 💵", color = Color.Gray)
+                                    Text(
+                                        text = "Поки транзакцій не було 💵",
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
                                 }
                             } else {
+                                val sdf = SimpleDateFormat(
+                                    "dd.MM.yyyy",
+                                    LocalLocale.current.platformLocale
+                                )
                                 state.transactions.take(3).forEach { transaction ->
+                                    val formattedDate = sdf.format(Date(transaction.createdAt))
                                     TransactionRow(
                                         transactionName = transaction.name,
-                                        amount = transaction.amount.toString(),
-                                        date = transaction.createdAt.toString()
+                                        amount = "${transaction.amount} ${transaction.currency.name}",
+                                        date = formattedDate
                                     )
                                 }
                                 Spacer(modifier = Modifier.height(8.dp))
@@ -237,7 +321,7 @@ private fun HomeScreenPreview() {
             transactionId = "1",
             senderAccountId = "1",
             receiverAccountId = "2",
-            name = "Переказ коштів",
+            name = "Поповнення",
             amount = BigDecimal("500.00"),
             description = "Переказ коштів від людини",
             currency = Currency.UAH,
@@ -268,18 +352,37 @@ private fun HomeScreenPreview() {
         ),
     )
 
+    val fakeDomainAccount = Account(
+        accountId = "1",
+        ownerId = "1",
+        accountType = AccountType.PERSONAL,
+        fullName = "Іван Іванов",
+        iban = "UA12345678901234567890123456",
+        balance = BigDecimal("15000.50"),
+        currency = Currency.UAH,
+        status = AccountStatus.ACTIVE,
+        createdAt = System.currentTimeMillis()
+    )
+
     BankSimulatorTheme {
         HomeScreenContent(
             state = HomeState(
                 firstName = "Іван",
                 lastName = "Іванов",
                 cards = fakeCards,
-                transactions = fakeTransactions
+                transactions = fakeTransactions,
+                balance = BigDecimal("15000.50"),
+                account = fakeDomainAccount,
+                isLoading = false,
+                errorMessage = null,
+                isLogout = false
             ),
             onAccountsClick = {},
             onHistoryClick = {},
             onCardSettingsClick = {},
-            onLogoutClick = {}
+            onAddNewCardClick = {},
+            onLogoutClick = {},
+            onTransferMoneyClick = {}
         )
     }
 }

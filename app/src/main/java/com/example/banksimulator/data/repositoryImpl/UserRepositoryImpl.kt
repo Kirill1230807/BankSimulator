@@ -1,12 +1,8 @@
 package com.example.banksimulator.data.repositoryImpl
 
-import android.util.Log
-import com.example.banksimulator.data.local.dao.TransactionDao
 import com.example.banksimulator.data.local.dao.UserDao
 import com.example.banksimulator.data.local.entity.UserEntity
 import com.example.banksimulator.data.mapper.toDomain
-import com.example.banksimulator.domain.model.Account
-import com.example.banksimulator.domain.model.Transaction
 import com.example.banksimulator.domain.model.User
 import com.example.banksimulator.domain.repository.UserRepository
 import com.google.firebase.Firebase
@@ -26,8 +22,7 @@ import javax.inject.Inject
 class UserRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth,
     private val firestore: FirebaseFirestore,
-    private val userDao: UserDao,
-    private val transactionDao: TransactionDao
+    private val userDao: UserDao
 ) : UserRepository {
     override suspend fun login(
         email: String,
@@ -56,7 +51,6 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun saveUserProfile(user: User) {
         withContext(Dispatchers.IO) {
             try {
-                Log.d("RegisterBank", "1. Готуємо дані для Firestore...")
                 val userMap = hashMapOf(
                     "id" to user.userId,
                     "firstName" to user.firstName,
@@ -66,13 +60,11 @@ class UserRepositoryImpl @Inject constructor(
                     "createdAt" to System.currentTimeMillis()
                 )
 
-                Log.d("RegisterBank", "2. Відправляємо дані у Firestore...")
                 firestore.collection("users")
                     .document(user.userId)
                     .set(userMap)
                     .await()
 
-                Log.d("RegisterBank", "3. Firestore успіх! Зберігаємо в Room...")
                 val userEntity = UserEntity(
                     userId = user.userId,
                     firstName = user.firstName,
@@ -83,17 +75,9 @@ class UserRepositoryImpl @Inject constructor(
                 )
 
                 userDao.insertUser(userEntity)
-                Log.d("RegisterBank", "4. Room успішно зберіг дані! Все готово.")
             } catch (e: Exception) {
-                Log.e("RegisterBank", "Помилка всередині saveUserProfile: ${e.message}", e)
                 throw e
             }
-        }
-    }
-
-    override fun getUserWithAccounts(userId: String): Flow<List<Account>> {
-        return userDao.getUserWithAccounts(userId).map { userWithAccounts ->
-            userWithAccounts.accounts.map { it.toDomain() }
         }
     }
 
@@ -108,12 +92,6 @@ class UserRepositoryImpl @Inject constructor(
 
     override fun getHomeUserData(userId: String): Flow<User?> {
         return userDao.getHomeUserData(userId).map { it?.user?.toDomain() }
-    }
-
-    override fun getUserTransactions(userId: String): Flow<List<Transaction>> {
-        return transactionDao.getTransactionsForUser(userId).map { transactions ->
-            transactions.map { it.toDomain() }
-        }
     }
 
     override fun hasUser(): Boolean {

@@ -92,7 +92,11 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
                     }
                 },
                 onNavigateToHistory = {},
-                onNavigateToCardSettings = {}
+                onNavigateToCardSettings = {},
+                onNavigateToCreateCard = {},
+                onTransferMoneyClick = {
+                    // navController.navigate(TransferMoneyScreen)
+                }
             )
         }
         composable<ExchangeRatesScreen> {

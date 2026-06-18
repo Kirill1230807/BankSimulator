@@ -13,10 +13,8 @@ interface UserRepository {
     ): String
 
     suspend fun saveUserProfile(user: User)
-    fun getUserWithAccounts(userId: String): Flow<List<Account>>
     fun getCurrentUserData(): Flow<User?>
     fun getHomeUserData(userId: String): Flow<User?>
-    fun getUserTransactions(userId: String): Flow<List<Transaction>>
     fun hasUser(): Boolean
     suspend fun signOut()
 }

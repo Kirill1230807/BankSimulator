@@ -79,7 +79,7 @@ fun TransactionRow(
             Text(
                 text = date,
                 style = MaterialTheme.typography.bodySmall,
-                color = Color.Gray,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -93,7 +93,7 @@ fun TransactionRow(
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 16.sp
             ),
-            color = if (isExpense) MaterialTheme.colorScheme.error else Color(0xFF388E3C)
+            color = if (isExpense) MaterialTheme.colorScheme.error else Color(0xFF2E7D32)
         )
     }
 }

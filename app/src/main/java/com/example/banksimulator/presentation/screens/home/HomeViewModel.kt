@@ -2,6 +2,8 @@ package com.example.banksimulator.presentation.screens.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.banksimulator.domain.repository.AccountRepository
+import com.example.banksimulator.domain.repository.TransactionRepository
 import com.example.banksimulator.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -14,12 +16,15 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
 import javax.inject.Inject
 
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val accountRepository: AccountRepository,
+    private val transactionRepository: TransactionRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeState())
@@ -46,13 +51,17 @@ class HomeViewModel @Inject constructor(
 
                     combine(
                         userRepository.getHomeUserData(user.userId),
-                        userRepository.getUserTransactions(user.userId)
-                    ) { homeData, transactions ->
+                        transactionRepository.getUserTransactions(user.userId),
+                        accountRepository.getUserWithAccounts(user.userId)
+                    ) { homeData, transactions, accounts ->
+                        val mainAccount = accounts.firstOrNull()
                         _uiState.update {
                             it.copy(
                                 firstName = homeData?.firstName ?: "",
                                 lastName = homeData?.lastName ?: "",
                                 transactions = transactions,
+                                account = mainAccount,
+                                balance = mainAccount?.balance ?: BigDecimal.ZERO,
                                 isLoading = false
                             )
                         }

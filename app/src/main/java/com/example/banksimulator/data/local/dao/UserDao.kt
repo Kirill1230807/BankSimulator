@@ -20,9 +20,5 @@ interface UserDao {
 
     @Transaction
     @Query("SELECT * FROM users WHERE userId = :userId")
-    fun getUserWithAccounts(userId: String): Flow<UserWithAccounts>
-
-    @Transaction
-    @Query("SELECT * FROM users WHERE userId = :userId")
     fun getHomeUserData(userId: String): Flow<HomeUserData?>
 }
